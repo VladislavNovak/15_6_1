@@ -6,36 +6,35 @@
 
 using std::vector;
 
-vector<int>::const_iterator getFirstIt(vector<int> (&arr)) {
+vector<int>::const_iterator getIt(vector<int> &arr, bool needFirstIt) {
     int max = 0;
 
     vector<int>::const_iterator currentIt;
+    vector<int>::const_iterator startIt;
+    vector<int>::const_iterator endIt;
 
-    for (auto shift = arr.cbegin(); shift < arr.cend(); ++shift) {
-        int sum = std::accumulate(shift, arr.cend(), 0);
-        if (sum > max) {
-            max = sum;
-            currentIt = shift;
-        }
+    startIt = needFirstIt ? arr.cbegin() : arr.cend();
+    endIt = needFirstIt ? arr.cend() : arr.cbegin();
+
+    while((needFirstIt ? ++startIt : --startIt) != endIt) {
+        auto a = needFirstIt ? startIt : endIt;
+        auto b = needFirstIt ? endIt : startIt;
+        int sum = std::accumulate(a, b, 0);
+            if (sum > max) {
+                max = sum;
+                currentIt = startIt;
+            }
     }
 
     return currentIt;
 }
 
-vector<int>::const_iterator getLastIt(vector<int> (&arr)) {
-    int max = 0;
+vector<int>::const_iterator getFirstIt(vector<int> &arr) {
+    return getIt(arr, true);
+}
 
-    auto currentIt = arr.cend();
-
-    for (auto shift = arr.cend(); shift > arr.begin(); --shift) {
-        int sum = std::accumulate(arr.cbegin(), shift, 0);
-        if (sum > max) {
-            max = sum;
-            currentIt = shift;
-        }
-    }
-
-    return currentIt;
+vector<int>::const_iterator getLastIt(vector<int> &arr) {
+    return getIt(arr, false);
 }
 
 void report(vector<int> (&arr), vector<int>::const_iterator firstIt, vector<int>::const_iterator lastIt) {
